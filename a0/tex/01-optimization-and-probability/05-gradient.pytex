@@ -1,0 +1,25 @@
+\item \points{1e} {\bf Linear Algebra}
+
+Let's practice taking gradients, which is a key operation for being able to
+optimize continuous functions. For $\mathbf w \in \mathbb R^d$ (represented as a
+column vector) and constants $\mathbf a_i, \mathbf b_j \in \mathbb R^d$ (also
+represented as column vectors) and $\lambda \in \mathbb R$, define the
+scalar-valued function
+$$f(\mathbf w) = \sum_{i=1}^n \sum_{j=1}^n (\mathbf a_i^\top \mathbf w - \mathbf b_j^\top \mathbf w)^2 + \lambda \|\mathbf w\|_2^2,$$
+where the vector is $\mathbf w = (w_1, \dots, w_d)^\top$ and
+$\|\mathbf w\|_2 = \sqrt{\sum_{k=1}^d w_k^2}$ is known as the $L_2$ norm.
+Compute the gradient$\nabla f(\mathbf w)$.
+
+{\em Recall: the gradient is a $d$-dimensional vector of the partial derivatives
+with respect to each $w_i$:
+$$\nabla f(\mathbf w) = \left(\frac{\partial f(\mathbf w)}{\partial w_1}, \dots \frac{\partial f(\mathbf w)}{\partial w_d}\right)^\top.$$
+If you're not comfortable with vector calculus, first warm up by working out
+this problem using scalars in place of vectors and derivatives in place of
+gradients. Not everything for scalars goes through for vectors, but the two
+should at least be consistent with each other (when $d=1$). Do not write out
+summation over dimensions, because that gets tedious.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_1e(.*?)% <SCPD_SUBMISSION_TAG>_1e', f.read(), re.DOTALL)).group(1))
+🐍

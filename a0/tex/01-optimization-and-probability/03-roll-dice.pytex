@@ -1,0 +1,14 @@
+\item \points{1c} {\bf Probability}
+
+Suppose you repeatedly roll a fair six-sided die until you roll a $1$ (and then
+you stop). Every time you roll a $2$, you lose $a$ points, and every time you
+roll a 6, you win $b$ points. You do not win or lose any points if you roll a 3,
+4, or a 5. What is the expected number of points (as a function of $a$ and $b$)
+you will have when you stop?
+
+{\em Hint: We recommend defining a recurrence.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_1c(.*?)% <SCPD_SUBMISSION_TAG>_1c', f.read(), re.DOTALL)).group(1))
+🐍

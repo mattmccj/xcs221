@@ -1,0 +1,16 @@
+\item \points{1b} {\bf Optimization}
+
+In this class, there will be a lot of sums and maxes. Let's see what happens if
+we switch the order. Let
+$f(\mathbf x) = \sum_{i=1}^d \max_{s \in \{1,-1\}} s x_i$
+and $g(\mathbf x) = \max_{s \in \{1,-1\}} \sum_{i=1}^d s x_i$, where
+$\mathbf x = (x_1, \dots, x_d) \in \mathbb{R}^d$ is a real vector. Does $f(\mathbf x) \le g(\mathbf x)$, $f(\mathbf x) = g(\mathbf x)$, or $f(\mathbf x) \ge g(\mathbf x)$ hold for all $\mathbf x$?
+Please provide a formal proof explaining your answer.
+
+{\em Hint: You may find it helpful to refactor the expressions so that they
+are maximizing the same quantity over different sized sets.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_1b(.*?)% <SCPD_SUBMISSION_TAG>_1b', f.read(), re.DOTALL)).group(1))
+🐍

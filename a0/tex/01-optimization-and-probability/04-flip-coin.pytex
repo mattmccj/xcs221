@@ -1,0 +1,20 @@
+\item \points{1d} {\bf Probability}
+
+Suppose the probability of a coin turning up heads is $0 < p < 1$, and that
+we flip it 7 times and get $\{ \text{H}, \text{H}, \text{T}, \text{H}, \text{T}
+, \text{T}, \text{H}  \}$. We know the probability (likelihood) of obtaining
+this sequence is $L(p) = p p (1-p) p (1-p) (1-p) p = p^4(1-p)^3$. What value of
+$p$ maximizes $L(p)$?
+
+What is an intuitive interpretation of this value of $p$?
+
+{\em Hint: Consider taking the derivative of $\log L(p)$. You can also directly
+take the derivative of $L(p)$, but it is cleaner and more natural to
+differentiate $\log L(p)$. You can verify for yourself that the value of $p$
+which maximizes $\log L(p)$ must also maximize $L(p)$ (you are not required to
+prove this in your solution).}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_1d(.*?)% <SCPD_SUBMISSION_TAG>_1d', f.read(), re.DOTALL)).group(1))
+🐍

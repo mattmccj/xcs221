@@ -1,0 +1,17 @@
+\item \points{1a} {\bf Optimization}
+
+Let $x_1, \dots, x_n$ be real numbers representing positions on a number line.
+Let $w_1, \dots, w_n$ be positive real numbers representing the importance of
+each of these positions. Consider the quadratic function:
+$f(\theta) = \frac{1}{2} \sum_{i=1}^n w_i (\theta - x_i)^2$.
+What value of $\theta$ minimizes $f(\theta)$? What problematic issues could
+arise if some of the $w_i$'s are negative?
+
+{\em Note: You can think about this problem as trying to find the point $\theta$
+that's not too far away from the $x_i$'s. Over time, hopefully you'll appreciate
+how nice quadratic functions are to minimize.}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_1a(.*?)% <SCPD_SUBMISSION_TAG>_1a', f.read(), re.DOTALL)).group(1))
+🐍

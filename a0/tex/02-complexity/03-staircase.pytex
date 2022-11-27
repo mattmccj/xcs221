@@ -1,0 +1,18 @@
+\item \points{2c} {\bf Recursion}
+
+Suppose we have a staircase with $n$ steps (we start on the ground, so we need
+$n$ total steps to reach the top). We can take as many steps forward at a time,
+but we will never step backwards. How many ways are there to reach the top?
+
+Give your answer as a function of $n$. For example: if $n = 3$, then the answer is $4$. The four options are the following:
+\begin{enumerate}[noitemsep, topsep=0pt,label=\arabic*)]
+\item take one step, take one step, take one step
+\item take two steps, take one step
+\item take one step, take two steps
+\item take three steps.
+\end{enumerate}
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_2c(.*?)% <SCPD_SUBMISSION_TAG>_2c', f.read(), re.DOTALL)).group(1))
+🐍

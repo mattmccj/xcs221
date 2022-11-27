@@ -1,0 +1,15 @@
+\item \points{2a} {\bf Complexity}
+
+Suppose we have an image of a human face consisting of $n \times n$ pixels. In
+our simplified setting, a face consists of two eyes, two ears, one nose, and one
+mouth, each represented as an arbitrary axis-aligned rectangle (i.e. the axes of
+the rectangle are aligned with the axes of the image).  As we'd like to handle
+Picasso portraits too, there are no constraints on the location or size of the
+rectangles. How many possible faces (choice of its component rectangles) are
+there? In general, we only care about asymptotic complexity, so give your answer
+in the form of $O(n^c)$ or $O(c^n)$ for some integer $c$.
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_2a(.*?)% <SCPD_SUBMISSION_TAG>_2a', f.read(), re.DOTALL)).group(1))
+🐍

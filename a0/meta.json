@@ -1,0 +1,9 @@
+{
+  "due_date":"No due date",
+  "tex_show_guidelines": false,
+  "tex_show_honor_code": false,
+  "tex_show_submission_instructions":false,
+  "tex_show_autograder_instructions":true,
+  "tex_preamble":"\\Large\nTHIS ASSIGNMENT IS COMPLETELY OPTIONAL.\n\nYOU WILL RECEIVE NO CREDIT FOR ANY PART OF THIS ASSIGNMENT.\n\\normalsize\n\n",
+  "multifile_coding_submission":false
+}

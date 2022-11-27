@@ -1,0 +1,14 @@
+\item \points{2b} {\bf Dynamic Programming}
+
+Suppose we have an $n\times n$ grid. We start in the upper-left corner (position
+$(1,1)$), and we would like to reach the lower-right corner (position $(n,n)$)
+by taking single steps down and right. Define a function $c(i, j)$ to be the
+cost of touching position $(i, j)$, and assume it takes constant time to
+compute. Note that $c(i, j)$ can be negative. Give an algorithm for computing
+the minimum cost in the most efficient way. What is the runtime (just give the
+big-O)?
+
+🐍
+import re
+with open('submission.tex') as f: print((re.search(r'% <SCPD_SUBMISSION_TAG>_2b(.*?)% <SCPD_SUBMISSION_TAG>_2b', f.read(), re.DOTALL)).group(1))
+🐍
