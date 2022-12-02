@@ -37,10 +37,11 @@ class SegmentationProblem(util.SearchProblem):
         #should return action, newstate, and cost
              #(Action, state chge, cost)?
         result = []
+        #end = len(self.query)
         end = state+7 if state+7 < len(self.query) else len(self.query)
         for i in range(state,end):
             word = self.query[state:i+1]
-            result.append((word, i+1, self.unigramCost(word)))
+            result.append((word, i+1, self.unigramCost(word)+end-i))
         return result
         #curWord = self.query[state[0]:state[1]]
         #cost = self.unigramCost(curWord)
@@ -95,14 +96,14 @@ class VowelInsertionProblem(util.SearchProblem):
     def startState(self):
         pass
         # ### START CODE HERE ###
-        return 0
+        return 0, wordsegUtil.SENTENCE_BEGIN
         # ### END CODE HERE ###
 
     def isEnd(self, state) -> bool:
         pass
         # ### START CODE HERE ###
         #if state has picked up all the words we are done
-        if state == len(self.queryWords): return True
+        if state[0] >= len(self.queryWords): return True
 
         return False
         # ### END CODE HERE ###
@@ -114,17 +115,17 @@ class VowelInsertionProblem(util.SearchProblem):
         result = []
         
         #TODO ???Need 1 wrd condition here???
-        lwrd = self.queryWords[state-1] if state != 0 else wordsegUtil.SENTENCE_BEGIN
-        rwrd = self.queryWords[state] 
+        lwrd = state[1] #self.queryWords[state-1] if state != 0 else wordsegUtil.SENTENCE_BEGIN
+        rwrd = self.queryWords[state[0]] 
 
-        lfills = self.possibleFills(lwrd)
-        if len(lfills) == 0: lfills= [lwrd]
+        #lfills = self.possibleFills(lwrd)
+        #if len(lfills) == 0: lfills= [lwrd]
         rfills = self.possibleFills(rwrd)
         if len(rfills) == 0: rfills= [rwrd]
 
-        for lfill in lfills:
-            for rfill in rfills:
-                result.append(((lfill,rfill),state+1,self.bigramCost(lfill,rfill)))
+        #for lfill in lfills:
+        for rfill in rfills:
+                result.append((rfill,(state[0]+1,rfill),self.bigramCost(lwrd,rfill)))
         return result
         #run them both through their possibleFills
         #zip the Fills together as states to move forward
@@ -144,9 +145,9 @@ def insertVowels(
     ucs.solve(VowelInsertionProblem(queryWords,bigramCost,possibleFills))
 
     output = ""
-    for i in range(len(ucs.actions)):
-        output = output + ucs.actions[i][1]
-        if i < len(ucs.actions)-1:
+    for action in ucs.actions:
+        output = output + action
+        if action != ucs.actions[-1]:
             output = output + " "
     return output
     # ### END CODE HERE ###
@@ -191,7 +192,9 @@ class JointSegmentationInsertionProblem(util.SearchProblem):
         for nxstate in range(state[0]+1,len(self.query)+1):
             wrd = self.query[state[0]:nxstate]
             rfills = self.possibleFills(wrd)
-            if rfills != set(): break
+            nxwrd = self.query[state[0]:(nxstate+1)]
+            nxfills = self.possibleFills(nxwrd)
+            if rfills != set() and nxfills == set(): break
         
         #build the return options
         for rfill in rfills:
