@@ -433,6 +433,7 @@ class Test_3b(A2_TestCase):
             parts = [
                 wordsegUtil.removeAll(w, "aeiou") for w in wordsegUtil.words(query)
             ]
+
             self.compare_with_solution_or_wait(
                 submission,
                 "segmentAndInsert",

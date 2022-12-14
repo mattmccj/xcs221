@@ -37,22 +37,12 @@ class SegmentationProblem(util.SearchProblem):
         #should return action, newstate, and cost
              #(Action, state chge, cost)?
         result = []
-        #end = len(self.query)
-        end = state+7 if state+7 < len(self.query) else len(self.query)
+        end = len(self.query)+1
+        #end = state+7 if state+7 < len(self.query) else len(self.query)
         for i in range(state,end):
             word = self.query[state:i+1]
             result.append((word, i+1, self.unigramCost(word)+end-i))
         return result
-        #curWord = self.query[state[0]:state[1]]
-        #cost = self.unigramCost(curWord)
-        #
-        #wrdNxtState = [state[1]+1,state[1]+2]
-        #
-        #ltrNxtState = [state[0],state[1]+1] 
-        #
-        ##i have 2 clear actions, and a clear function that calculates cost
-        #return  [(" ", wrdNxtState, cost), (self.query[state[1]], ltrNxtState, 0)]
-        #return action, nxtState, cost
         # ### END CODE HERE ###
 
 
@@ -187,18 +177,20 @@ class JointSegmentationInsertionProblem(util.SearchProblem):
         # ### START CODE HERE ###
         
         result = []
+        rfills = set()
         lwrd = state[1]
         #iterate over state to find the next potential word
         for nxstate in range(state[0]+1,len(self.query)+1):
             wrd = self.query[state[0]:nxstate]
             rfills = self.possibleFills(wrd)
-            nxwrd = self.query[state[0]:(nxstate+1)]
-            nxfills = self.possibleFills(nxwrd)
-            if rfills != set() and nxfills == set(): break
+            for rfill in rfills:
+                result.append((rfill, (nxstate,rfill),self.bigramCost(lwrd,rfill)+len(self.query)-nxstate))
+            #rfills.update(fills)
+            
+            #if rfills != set() and self.possibleFills(self.query[state[0]:(nxstate+1)]) == set(): break
         
         #build the return options
-        for rfill in rfills:
-            result.append((rfill, (nxstate,rfill),self.bigramCost(lwrd,rfill)))
+        
         return result
         
         # ### END CODE HERE ###
@@ -218,10 +210,11 @@ def segmentAndInsert(
     ucs.solve(JointSegmentationInsertionProblem(query,bigramCost,possibleFills))
 
     output = ""
-    for action in ucs.actions:
-        output = output + action
-        if action != ucs.actions[-1]:
+    for i in range(len(ucs.actions)):
+        output = output + ucs.actions[i]
+        if i < len(ucs.actions)-1:
             output = output + " "
+    
     return output
     # ### END CODE HERE ###
 
