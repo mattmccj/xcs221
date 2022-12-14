@@ -50,6 +50,51 @@ class BlackjackMDP(util.MDP):
     def succAndProbReward(self, state, action):
         pass
         # ### START CODE HERE ###
+        # result structure:
+        # [State, probability, cost]
+        # state Structure
+        # [sum of cards in hand, peeked value, deck state]
+        #we are in a post bust state
+        if state[0] > self.threshold:
+            return []
+        cards = state[0]
+        peek = state[1]
+        deck = list(state[2])
+        deckSize = 0
+        for card in deck:
+            deckSize = deckSize + card
+        result = []
+        if action == 'Take':
+            #get setup to take a random card from the deck
+            if state[1] != None:
+                deck[peek] -= 1
+                result.append(((cards+self.cardValues[peek],None,tuple(deck)), 1, 0))
+                return result
+            #create a potential action state for the draw of any 1 of the still open cards 
+            for deckIdx in range(len(deck)):
+                if deck[deckIdx] > 0:
+                    if deckSize == 1 and deck[deckIdx] == 1:
+                        return [((cards+self.cardValues[deckIdx],None,None),1,cards+self.cardValues[deckIdx])]
+                    prob = deck[deckIdx]/deckSize
+                    deck[deckIdx] -= 1
+                    #bust state
+                    if cards + self.cardValues[deckIdx] > self.threshold:
+                        result.append(((cards+self.cardValues[deckIdx],None,None),prob,0))    
+                    else:
+                        result.append(((cards+self.cardValues[deckIdx],None,tuple(deck)),prob,0))
+                    deck[deckIdx] += 1
+            return result
+        elif action == 'Peek':
+            #we get to look at the next card with a cost of -1
+            for deckIdx in range(len(deck)):
+                if deck[deckIdx] > 0:
+                    prob = deck[deckIdx]/deckSize
+                    result.append(((cards,deckIdx,tuple(deck)),prob,-1))
+            return result
+        elif action == 'Quit':
+            #walk away state
+            result.append(((0,None,None),1,0))
+            return result
         # ### END CODE HERE ###
 
     def discount(self):
@@ -101,6 +146,8 @@ class QLearningAlgorithm(util.RLAlgorithm):
     def incorporateFeedback(self, state, action, reward, newState):
         pass
         # ### START CODE HERE ###
+        #updated Q = (1- learning rate)curQ + learning rate(curReward+discounted nextQ)
+        #how does W of our perceptron link to updated Q
         # ### END CODE HERE ###
 
 # Return a single-element list containing a binary (indicator) feature
