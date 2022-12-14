@@ -148,6 +148,13 @@ class QLearningAlgorithm(util.RLAlgorithm):
         # ### START CODE HERE ###
         #updated Q = (1- learning rate)curQ + learning rate(curReward+discounted nextQ)
         #how does W of our perceptron link to updated Q
+        #weight = self.weights
+        stepSize = self.getStepSize()
+        Qcur = self.getQ(state,action)
+        actionNx = self.getAction(newState)
+        valNx = self.getQ(newState,actionNx)
+        
+        self.weights -= stepSize * (Qcur - (reward+self.discount*valNx)) * self.featureExtractor(state,action)
         # ### END CODE HERE ###
 
 # Return a single-element list containing a binary (indicator) feature
