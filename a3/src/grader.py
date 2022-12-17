@@ -130,8 +130,8 @@ class Test_4b(GradedTestCase):
   @graded(timeout=60)
   def test_helper(self):
     """4b-helper-0:  Helper function to run Q-learning simulations for question 4b."""
-    submission.simulate_QL_over_MDP(submission.smallMDP, submission.identityFeatureExtractor)
-    submission.simulate_QL_over_MDP(submission.largeMDP, submission.identityFeatureExtractor)
+    #submission.simulate_QL_over_MDP(submission.smallMDP, submission.identityFeatureExtractor)
+    #submission.simulate_QL_over_MDP(submission.largeMDP, submission.identityFeatureExtractor)
     # NOTE:  This is bad unit testing practice- the course staff is including
     # always-skipped tests to make the test suite a one-stop shop for students.
     # Production unit tests, in general, should not include test cases that

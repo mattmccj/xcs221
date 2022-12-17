@@ -55,7 +55,7 @@ class BlackjackMDP(util.MDP):
         # state Structure
         # [sum of cards in hand, peeked value, deck state]
         #we are in a post bust state
-        if state[0] > self.threshold:
+        if (state[0] > self.threshold) or (state[2] == None):
             return []
         cards = state[0]
         peek = state[1]
@@ -149,12 +149,27 @@ class QLearningAlgorithm(util.RLAlgorithm):
         #updated Q = (1- learning rate)curQ + learning rate(curReward+discounted nextQ)
         #how does W of our perceptron link to updated Q
         #weight = self.weights
+        if newState == None:
+                return # this is the check for the end state
         stepSize = self.getStepSize()
         Qcur = self.getQ(state,action)
-        actionNx = self.getAction(newState)
-        valNx = self.getQ(newState,actionNx)
+        valNx = 0
+        #len = len(self.actions(newState))
+        valNx = max(self.getQ(newState,action) for action in self.actions(newState))
+        #for action in self.actions(newState):
+        #    valNx = self.getQ(newState,action) if self.getQ(newState,action) > valNx else valNx
         
-        self.weights -= stepSize * (Qcur - (reward+self.discount*valNx)) * self.featureExtractor(state,action)
+        #This needs to be a search of the full action space and a selection of the max value state
+        
+        phi = self.featureExtractor(state,action)
+
+        prediction = Qcur
+        target = reward + self.discount*valNx
+        
+        #self.weights[(state,action)] = self.weights[(state,action)] - (stepSize * (prediction-target) * phi[0][1])
+        
+        for vec in phi:
+            self.weights[vec[0]] = self.weights[vec[0]] - (stepSize*(prediction-target)*vec[1])
         # ### END CODE HERE ###
 
 # Return a single-element list containing a binary (indicator) feature
@@ -179,6 +194,13 @@ def simulate_QL_over_MDP(mdp, featureExtractor):
     # and then print some stats comparing the policies learned by these two approaches.
     pass
     # ### START CODE HERE ###
+    vi = util.ValueIteration()
+    vi.solve(mdp=mdp)
+    rl = QLearningAlgorithm(mdp.actions, mdp.discount(), featureExtractor, 0)
+    ql = util.simulate(mdp, rl, numTrials=3000, maxIterations=1000)
+    #print("Total Rewards:", ql)
+
+
     # ### END CODE HERE ###
 
 ############################################################
@@ -197,6 +219,24 @@ def blackjackFeatureExtractor(state, action):
     total, nextCard, counts = state
 
     # ### START CODE HERE ###
+    features = []
+    featureKey1 = (action, total)
+    featureValue = 1
+    features.append((featureKey1,featureValue))
+
+    if counts != None:
+        card_presence = counts
+        for count in  card_presence:
+            min(count,1)
+        featureKey2 = (action, card_presence)
+        features.append((featureKey2,featureValue))
+
+        for face in range(len(counts)):
+            #if counts[face]>0:# and (((action,face),featureValue) not in features):
+                #featureKey3 = (action,face)
+            features.append(((action,face,min(counts[face],1)),featureValue))
+            #else: features.append(((action,face),0))
+    return features
     # ### END CODE HERE ###
 
 ############################################################
