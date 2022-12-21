@@ -66,18 +66,30 @@ class BlackjackMDP(util.MDP):
         result = []
         if action == 'Take':
             #get setup to take a random card from the deck
-            if state[1] != None:
+            #send the result of the peeked card if peaked
+            if peek != None:
                 deck[peek] -= 1
-                result.append(((cards+self.cardValues[peek],None,tuple(deck)), 1, 0))
+                #exceeding the threshold with this take, dump the deck
+                if cards + self.cardValues[peek] > self.threshold:
+                    result.append(((cards+self.cardValues[peek],None,None),1,0)) 
+                else:
+                    result.append(((cards+self.cardValues[peek],None,tuple(deck)), 1, 0))
                 return result
             #create a potential action state for the draw of any 1 of the still open cards 
             for deckIdx in range(len(deck)):
+                #for each card in the deck that is still in the deck
                 if deck[deckIdx] > 0:
+                    #deck has run out of cards, dump the deck w/ reward on hand
                     if deckSize == 1 and deck[deckIdx] == 1:
-                        return [((cards+self.cardValues[deckIdx],None,None),1,cards+self.cardValues[deckIdx])]
+                        #bust clear the reward
+                        if cards + self.cardValues[deckIdx] > self.threshold:
+                            return [((cards+self.cardValues[deckIdx],None,None),1,0)]
+                        else:
+                            #reward on hand 
+                            return [((cards+self.cardValues[deckIdx],None,None),1,cards+self.cardValues[deckIdx])]
                     prob = deck[deckIdx]/deckSize
                     deck[deckIdx] -= 1
-                    #bust state
+                    #bust state: dump deck if threshold exceeded
                     if cards + self.cardValues[deckIdx] > self.threshold:
                         result.append(((cards+self.cardValues[deckIdx],None,None),prob,0))    
                     else:
@@ -85,15 +97,24 @@ class BlackjackMDP(util.MDP):
                     deck[deckIdx] += 1
             return result
         elif action == 'Peek':
+            #we are forced to get the next card if already peeked
+            if peek != None:
+                deck[peek] -= 1
+                #exceeding the threshold with this take, dump the deck
+                if cards + self.cardValues[peek] > self.threshold:
+                    result.append(((cards+self.cardValues[peek],None,None),1,0)) 
+                else:
+                    result.append(((cards+self.cardValues[peek],None,tuple(deck)), 1, 0))
+                return result
             #we get to look at the next card with a cost of -1
             for deckIdx in range(len(deck)):
                 if deck[deckIdx] > 0:
                     prob = deck[deckIdx]/deckSize
-                    result.append(((cards,deckIdx,tuple(deck)),prob,-1))
+                    result.append(((cards,deckIdx,tuple(deck)),prob,-self.peekCost))
             return result
         elif action == 'Quit':
             #walk away state
-            result.append(((0,None,None),1,0))
+            result.append(((0,None,None),1,cards))
             return result
         # ### END CODE HERE ###
 

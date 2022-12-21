@@ -43,7 +43,9 @@ class ValueIteration(MDPAlgorithm):
                 # This evaluates to zero for end states, which have no available actions (by definition)
                 newV[state] = max(computeQ(mdp, V, state, action) for action in mdp.actions(state))
             numIters += 1
-            if max(abs(V[state] - newV[state]) for state in mdp.states) < epsilon:
+            stateChg = max(abs(V[state]-newV[state]) for state in mdp.states)
+            #print("New State change:{}".format(stateChg))
+            if stateChg < epsilon:
                 V = newV
                 break
             V = newV
