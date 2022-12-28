@@ -169,7 +169,74 @@ class MinimaxAgent(MultiAgentSearchAgent):
     """
     pass
     # ### START CODE HERE ###
-    # ### END CODE HERE ###
+
+    # isEnd() check
+    # early exit on a win or loss state 
+    if gameState.isWin() or gameState.isLose():
+      return Directions.STOP
+    def recurse(state):
+
+      agents = gameState.getNumAgents()    
+      # determine the active agent
+      activeAgent = self.index
+      if activeAgent == agents-1:
+        self.depth -= 1
+        self.index = 0
+      else:
+        self.index += 1
+      actions = []
+      for action in state.getLegalActions(activeAgent):
+        if self.depth > 0:
+          #im infinitely recursing because there is no decrementing of depth or index
+          actions.append(recurse(state.generateSuccessor(activeAgent,action)))
+          #Choices = [(recurse(game.succ(state,action))[0], action) for action in game.actions(state)]
+        #exit if we have searched to our depth
+        else:
+          actions = [(state,None)]
+      #actions = [recurse(gameState.generateSuccessor(activeAgent, action)) for action in gameState.getLegalActions(activeAgent)]
+      #scores = [action[0].getScore() for action in actions]
+      #initialization of opAction or optimal gamestate based on the score of the gamestate
+      opAction = actions[0]
+      for action in actions:
+        if activeAgent == 0:
+          opAction = action if action[0].getScore() > opAction[0].getScore() else opAction
+        if activeAgent > 0:
+          opAction = action if action[0].getScore() < opAction[0].getScore() else opAction      
+
+      return opAction
+    nxState, action = recurse(gameState)
+    #temp code to know the legal actions for this walk
+    pactions = gameState.getLegalActions(0)
+    return action
+    #nxScore = 0
+    #nxAction = Directions.STOP
+    ## switch case for agent?
+    ## pick the best scoring action for PacMan (assuming PacMan is the active agent)
+    #if activeAgent == 0:
+    #  for action in actions:
+    #    tmpgameState = gameState.generateSuccessor(activeAgent,action)
+    #    #keep the next best gameState for PacMan
+    #    if tmpgameState.getScore() > nxScore:
+    #      nxScore = tmpgameState.getScore()
+    #      nxAction = action
+    ## Pick the worst scoring action for PacMan (assuming Ghosts are active agent) 
+    #else:
+    #    nxScore = 5000
+    #    for action in actions:
+    #      tmpgameState = gameState.generateSuccessor(activeAgent,action)
+    #      #keep the next worst gameState for PacMan
+    #      if tmpgameState.getScore() < nxScore:
+    #        nxScore = tmpgameState.getScore()
+    #        nxAction = action
+    ## we are down a layer of depth
+    #if activeAgent == agents:
+    #    self.depth -= 1
+    #    self.index = 0
+    #else:
+    #  self.index += 1    
+    #
+    #return nxAction
+    ## ### END CODE HERE ###
 
 ######################################################################################
 # Problem 2a: implementing alpha-beta

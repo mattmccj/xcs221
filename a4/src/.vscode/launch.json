@@ -1,0 +1,54 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Grader",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/grader.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "pac-man play",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/pacman.py",
+            "args": [],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        // -------------- Reflex Agent Flags -----------------
+        // -p player Use: ReflexAgent to run model
+        // -l layout Use: testClassic and can even run poorly on this
+        //           default: mediumClassic
+        // -k num of ghosts
+        //           Note: You can never have more ghosts than the layout permists 
+        //           See: src/layouts/mediumClassic.lay
+        // "-g DirectionalGhost" runs the Ghosts in a nonrandom decision pattern
+        // -n num of games to play in a row
+        // -q Graphics off
+        //
+
+        {
+            "name": "pac-man reflexAgent",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/pacman.py",
+            "args": ["-p ReflexAgent"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}
