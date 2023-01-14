@@ -38,7 +38,7 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/pacman.py",
-            "args": ["-p ReflexAgent"],
+            "args": ["-p", "AlphaBetaAgent", "-a", "depth=4"],
             "console": "integratedTerminal",
             "justMyCode": true
         },

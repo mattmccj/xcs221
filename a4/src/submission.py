@@ -172,70 +172,46 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
     # isEnd() check
     # early exit on a win or loss state 
-    if gameState.isWin() or gameState.isLose():
+    if gameState.isWin() or gameState.isLose() or gameState.getLegalActions(0)==None:
       return Directions.STOP
+    
+    agents = gameState.getNumAgents()
+    depthTemp = self.depth
     def recurse(state):
-
-      agents = gameState.getNumAgents()    
-      # determine the active agent
       activeAgent = self.index
+      
+      #pop back with the score once I reach full depth or game end
+      if(state.isWin() or gameState.isLose() or (self.depth == 0 and self.index ==agents-1) or state.getLegalActions(activeAgent) == []):
+        return(self.evaluationFunction(state),None)
+
+      # determine the active agent
       if activeAgent == agents-1:
         self.depth -= 1
         self.index = 0
       else:
         self.index += 1
+
       actions = []
-      for action in state.getLegalActions(activeAgent):
-        if self.depth > 0:
-          #im infinitely recursing because there is no decrementing of depth or index
-          actions.append(recurse(state.generateSuccessor(activeAgent,action)))
-          #Choices = [(recurse(game.succ(state,action))[0], action) for action in game.actions(state)]
-        #exit if we have searched to our depth
-        else:
-          actions = [(state,None)]
-      #actions = [recurse(gameState.generateSuccessor(activeAgent, action)) for action in gameState.getLegalActions(activeAgent)]
-      #scores = [action[0].getScore() for action in actions]
-      #initialization of opAction or optimal gamestate based on the score of the gamestate
-      opAction = actions[0]
-      for action in actions:
-        if activeAgent == 0:
-          opAction = action if action[0].getScore() > opAction[0].getScore() else opAction
-        if activeAgent > 0:
-          opAction = action if action[0].getScore() < opAction[0].getScore() else opAction      
+      legalActions = state.getLegalActions(activeAgent)
+      for action in legalActions:
+        actions.append((recurse(state.generateSuccessor(activeAgent,action))[0],action))
+        #Choices = [(recurse(game.succ(state,action))[0], action) for action in game.actions(state)]
+    
+      # if pacman: Max
+      if activeAgent == 0:
+        opAction = max(actions)
+      #if ghost: Min
+      if activeAgent > 0:
+        opAction = min(actions)      
 
       return opAction
-    nxState, action = recurse(gameState)
+    utility, action = recurse(gameState)
+    self.depth = depthTemp
+    self.index = 0
     #temp code to know the legal actions for this walk
-    pactions = gameState.getLegalActions(0)
+    #pactions = gameState.getLegalActions(0)
+    print('minimaxPolicy: => action {} with utility {}'.format(action, utility))
     return action
-    #nxScore = 0
-    #nxAction = Directions.STOP
-    ## switch case for agent?
-    ## pick the best scoring action for PacMan (assuming PacMan is the active agent)
-    #if activeAgent == 0:
-    #  for action in actions:
-    #    tmpgameState = gameState.generateSuccessor(activeAgent,action)
-    #    #keep the next best gameState for PacMan
-    #    if tmpgameState.getScore() > nxScore:
-    #      nxScore = tmpgameState.getScore()
-    #      nxAction = action
-    ## Pick the worst scoring action for PacMan (assuming Ghosts are active agent) 
-    #else:
-    #    nxScore = 5000
-    #    for action in actions:
-    #      tmpgameState = gameState.generateSuccessor(activeAgent,action)
-    #      #keep the next worst gameState for PacMan
-    #      if tmpgameState.getScore() < nxScore:
-    #        nxScore = tmpgameState.getScore()
-    #        nxAction = action
-    ## we are down a layer of depth
-    #if activeAgent == agents:
-    #    self.depth -= 1
-    #    self.index = 0
-    #else:
-    #  self.index += 1    
-    #
-    #return nxAction
     ## ### END CODE HERE ###
 
 ######################################################################################
@@ -252,6 +228,62 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     """
     pass
     # ### START CODE HERE ###
+    if(gameState.isWin() or gameState.isLose() or gameState.getLegalActions()==[]):
+      return Directions.STOP
+    
+    
+    alpha = -1000
+    beta = 2000
+
+    agents = gameState.getNumAgents()
+    tempDepth = self.depth
+
+    def recurse(state):
+      nonlocal alpha
+      nonlocal beta
+      activeAgent = self.index
+
+      if(state.isWin() or gameState.isLose() or (self.depth == 0 and self.index ==agents-1) or state.getLegalActions() == []):
+        return (self.evaluationFunction(state),None)
+      
+      if(activeAgent == agents-1):
+        self.index = 0
+        self.depth -= 1
+      else:
+        self.index += 1
+      
+      legalActions = state.getLegalActions(activeAgent) 
+      actions = []
+      #build the decision tree
+      for action in legalActions:
+        nxState = state.generateSuccessor(activeAgent,action)
+        if activeAgent == 0 and self.evaluationFunction(nxState) > alpha:# and nxState.getScore() < beta:
+          actions.append((recurse(nxState)[0],action))
+        if activeAgent > 0 and self.evaluationFunction(nxState) < beta:# and nxState.getScore() > alpha:
+          actions.append((recurse(nxState)[0],action))
+        
+      #TODO: it doesn't want to turn west for some reason
+      if activeAgent == 0:
+        opAction = max(actions)
+        #this idea to fix being stuck in a corner is not a solution
+        #for a in actions:
+        #  if a[1] == action and ((a[0]-100) < opAction[0]):
+        #    opAction = a
+        alpha = opAction[0] if opAction[0] > alpha else alpha
+      if activeAgent > 0:
+        opAction = min(actions) 
+        beta = opAction[0] if opAction[0] < beta else beta
+      
+      return opAction
+
+    utility, action = recurse(gameState)
+
+    #print("AlphaBeta Policy: action => {} with utility {}".format(action,utility))
+    self.index = 0
+    self.depth = tempDepth
+
+    return action
+      
     # ### END CODE HERE ###
 
 ######################################################################################
@@ -271,6 +303,51 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
     """
     pass
     # ### START CODE HERE ###
+
+        # isEnd() check
+    # early exit on a win or loss state 
+    if gameState.isWin() or gameState.isLose() or gameState.getLegalActions(0)==None:
+      return Directions.STOP
+    
+    agents = gameState.getNumAgents()
+    depthTemp = self.depth
+    def recurse(state): #regression loop
+      activeAgent = self.index
+      
+      #pop back with the score once I reach full depth or game end
+      if(state.isWin() or gameState.isLose() or (self.depth == 0 and self.index ==agents-1) or state.getLegalActions(activeAgent) == []):
+        return(self.evaluationFunction(state),None)
+
+      # determine the active agent
+      if activeAgent == agents-1:
+        self.depth -= 1
+        self.index = 0
+      else:
+        self.index += 1
+
+      actions = []
+      legalActions = state.getLegalActions(activeAgent)
+      for action in legalActions:
+        actions.append((recurse(state.generateSuccessor(activeAgent,action))[0],action))
+        #Choices = [(recurse(game.succ(state,action))[0], action) for action in game.actions(state)]
+    
+      # if pacman: Max
+      if activeAgent == 0:
+        opAction = max(actions)
+      #if ghost: Min
+      if activeAgent > 0:
+        opActionIdx = random.randint(0,len(actions)-1)      
+        opAction = actions[opActionIdx]
+
+      return opAction
+    utility, action = recurse(gameState)
+    self.depth = depthTemp
+    self.index = 0
+    #temp code to know the legal actions for this walk
+    #pactions = gameState.getLegalActions(0)
+    #print('expectimaxPolicy: => action {} with utility {}'.format(action, utility))
+    return action
+
     # ### END CODE HERE ###
 
 ######################################################################################
@@ -284,6 +361,10 @@ def betterEvaluationFunction(currentGameState):
   """
   pass
   # ### START CODE HERE ###
+  curScore = currentGameState.getScore()
+  #primary feature to add might be location to the capsules if im not in ghost mode and then location of ghosts if im in ghost eating mode
+  # if there are no capsules search for food
+  return curScore
   # ### END CODE HERE ###
 
 # Abbreviation
